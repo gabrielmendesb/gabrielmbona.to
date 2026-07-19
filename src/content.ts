@@ -4,6 +4,9 @@ export const CONTACT = {
   linkedin: 'https://www.linkedin.com/in/g-mendes-bonato/',
 }
 
+// Served from public/ — drop the exported PDF there under this exact filename.
+export const RESUME_URL = '/Gabriel-Mendes-Bonato-Resume.pdf'
+
 export const INTRO = {
   name: 'Gabriel Mendes Bonato',
   title: 'Full-stack software engineer — industrial IoT & energy',
@@ -16,11 +19,11 @@ export const CASE = {
   heading: 'MeuWatt — solar plant monitoring & control',
   period: '2025 — present',
   summary:
-    'MeuWatt is the operations platform of a Brazilian solar O&M company. It collects telemetry from every device on a plant — inverters, protection relays, weather stations, energy meters — detects equipment faults, quantifies the energy each failure costs, and lets operators act remotely. I have led its engineering from the first commit: sole author of the on-site collector, lead author of the cloud API and dashboard.',
+    'MeuWatt is the operations platform of a Brazilian solar O&M company. It collects telemetry from every device on a plant — inverters, protection relays, weather stations, energy meters — detects equipment faults, quantifies the energy each failure costs, and lets operators act remotely. I work across the whole of it: the on-site collector, the cloud services, and the dashboard operators use.',
   meta: [
     { label: 'Role', value: 'Lead engineer' },
-    { label: 'Scope', value: '4 repositories, edge to UI' },
-    { label: 'Scale', value: 'Multi-plant fleet · 1-min telemetry' },
+    { label: 'Scope', value: 'Plant hardware to operator UI' },
+    { label: 'Scale', value: 'Multi-plant fleet · one instance per site' },
     { label: 'Stack', value: 'Python · FastAPI · TimescaleDB · React · TypeScript · Docker · Ansible' },
   ],
   built: [
@@ -37,12 +40,12 @@ export const CASE = {
     {
       title: 'Remote operations',
       body:
-        'An audited command rail carries operator actions to plant equipment: idempotency keys, claim timeouts, dual WebSocket/HTTP transports, and TOTP two-factor step-up on every mutation. Collectors update themselves over the same rail by delegating a detached container recreate to the Docker daemon — software reaches every site with no SSH.',
+        'An audited command rail carries operator actions to plant equipment: idempotency keys, claim timeouts, dual WebSocket/HTTP transports, and TOTP two-factor step-up on every mutation. Collectors update themselves over the same rail, delegating a detached container recreate to the Docker daemon so the update survives the restart it triggers.',
     },
     {
       title: 'Operations dashboard',
       body:
-        'A React 19 + TypeScript application of roughly sixty screens: real-time monitoring, generation and availability reporting, breakdown management, and fleet health. It is the daily working surface for plant operators.',
+        'A React 19 + TypeScript application covering real-time monitoring, generation and availability reporting, breakdown management, and fleet health. It is the daily working surface for plant operators.',
     },
     {
       title: 'Delivery pipeline',
@@ -51,12 +54,32 @@ export const CASE = {
     },
   ],
   outcomes: [
-    'Root-caused a production database cost overrun to unindexed read paths and fixed it with targeted indexes and query rewrites — spend returned to baseline within one billing cycle.',
-    'Reverse-engineered undocumented vendor Modbus fault registers by probing live inverters on-site; the platform now decodes fault codes the official documentation doesn’t list.',
-    'Replaced site visits and SSH sessions with 2FA-gated remote operations and over-the-air updates across the whole fleet.',
-    'Shipped, measured, and retired my own traffic-batching optimization after profiling showed the cost sat in the read path — the fix that stayed was the boring one: indexes.',
+    'Traced a production database cost overrun to unindexed read paths rather than write volume — targeted indexes and query rewrites returned spend to baseline within one billing cycle, and the batching added on the write side came back out.',
+    'Built the multi-vendor device layer behind the collector: register maps and drivers for inverters, protection relays, thermal relays, weather stations, energy meters and RS-485 gateways across several manufacturers.',
+    'Built two-factor-gated remote equipment operation and over-the-air fleet updates, covering configuration and power state for inverters, protection relays, thermal relays and multi-vendor RS-485 gateways — routine intervention no longer requires sending someone to the plant.',
   ],
 }
+
+export const FLOWS = [
+  {
+    label: 'Telemetry',
+    stages: [
+      { name: 'Plant sites', desc: 'Inverters · protection relays · weather stations · meters' },
+      { name: 'Edge collector', desc: 'Python service per plant — polling, fault detection, local buffer' },
+      { name: 'Cloud platform', desc: 'Ingestion, reports, loss attribution, alerting' },
+      { name: 'Operators', desc: 'Web dashboard & field commissioning tool' },
+    ],
+  },
+  {
+    label: 'Control',
+    stages: [
+      { name: 'Operators', desc: 'Command issued behind TOTP two-factor step-up' },
+      { name: 'Cloud platform', desc: 'Authorized, queued, audited end to end' },
+      { name: 'Edge collector', desc: 'Claims the command, executes, reports the result' },
+      { name: 'Plant sites', desc: 'Equipment operated remotely' },
+    ],
+  },
+]
 
 export const ALSO = [
   {
@@ -79,7 +102,7 @@ export const EXPERIENCE = [
     role: 'Software Engineer, Industrial IoT & Energy',
     period: '2025 — present',
     bullets: [
-      'Architected and lead development of the platform described above; made the technical calls — architecture, data model, rollout, rollback — across all four repositories.',
+      'Lead engineering on the platform described above — architecture, data model, and rollout decisions across the edge collector, cloud services, and dashboard.',
       'Operate the system in production: fleet deploys, incident response, on-site commissioning.',
     ],
   },
@@ -124,7 +147,7 @@ export const PRINCIPLES = [
   {
     title: 'End to end',
     body:
-      'I’m most effective owning a system whole: architecture, data model, implementation, rollout, and the operational aftermath. Decisions get written down; the documentation is part of the system.',
+      'I can carry a system the whole way — architecture, data model, implementation, rollout, and whatever it does in production afterwards. I work best with real autonomy and a say in the decisions that matter, on a team or on my own.',
   },
   {
     title: 'In production',
