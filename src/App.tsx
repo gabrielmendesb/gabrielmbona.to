@@ -16,6 +16,17 @@ const SECTION_IDS = ['top', 'work', 'experience', 'skills', 'contact'].filter(
   (id) => id !== 'contact' || SHOW_CONTACT,
 )
 
+/** Scroll to a section without writing a hash into the address bar.
+ *  The href stays put so the link is still right-clickable, keyboard
+ *  accessible, and works if the script never runs. */
+function scrollToSection(e: React.MouseEvent<HTMLAnchorElement>, id: string) {
+  const el = document.getElementById(id)
+  if (!el) return
+  e.preventDefault()
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+}
+
 function GithubIcon() {
   return (
     <svg viewBox="0 0 16 16" width="17" height="17" fill="currentColor" aria-hidden="true">
@@ -99,6 +110,7 @@ function SideNav({ t }: { t: Content }) {
         <a
           key={id}
           href={`#${id}`}
+          onClick={(e) => scrollToSection(e, id)}
           className={`side-link${active === id ? ' is-active' : ''}`}
           aria-current={active === id ? 'true' : undefined}
         >
@@ -115,9 +127,11 @@ function TopNav({ t, lang, setLang }: { t: Content; lang: Locale; setLang: (l: L
     <header className="nav">
       <div className="nav-inner">
         <nav className="nav-links" aria-label={t.ui.navLabel}>
-          <a href="#work">{t.ui.sections.work}</a>
-          <a href="#experience">{t.ui.sections.experience}</a>
-          <a href="#skills">{t.ui.sections.skills}</a>
+          <a href="#work" onClick={(e) => scrollToSection(e, 'work')}>{t.ui.sections.work}</a>
+          <a href="#experience" onClick={(e) => scrollToSection(e, 'experience')}>
+            {t.ui.sections.experience}
+          </a>
+          <a href="#skills" onClick={(e) => scrollToSection(e, 'skills')}>{t.ui.sections.skills}</a>
         </nav>
         <div className="nav-actions">
           <LangSwitch lang={lang} setLang={setLang} />
@@ -127,7 +141,9 @@ function TopNav({ t, lang, setLang }: { t: Content; lang: Locale; setLang: (l: L
             <DownloadIcon />
             {t.ui.cv}
           </a>
-          <a className="nav-cta" href="#contact">{t.ui.getInTouch}</a>
+          <a className="nav-cta" href="#contact" onClick={(e) => scrollToSection(e, 'contact')}>
+            {t.ui.getInTouch}
+          </a>
         </div>
       </div>
     </header>
