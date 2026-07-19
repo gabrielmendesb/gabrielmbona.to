@@ -31,13 +31,12 @@ function DownloadIcon() {
 function TopNav() {
   return (
     <header className="nav">
-      <a className="nav-name" href="#top">Gabriel Bonato</a>
       <nav className="nav-links" aria-label="Sections">
         <a href="#work">Work</a>
         <a href="#experience">Experience</a>
         <a href="#skills">Skills</a>
       </nav>
-      <div className="nav-social">
+      <div className="nav-actions">
         <a
           className="icon-btn"
           href={CONTACT.github}
@@ -56,8 +55,12 @@ function TopNav() {
         >
           <LinkedinIcon />
         </a>
+        <a className="nav-resume" href={RESUME_URL} download>
+          <DownloadIcon />
+          Résumé
+        </a>
+        <a className="nav-cta" href={`mailto:${CONTACT.email}`}>Email</a>
       </div>
-      <a className="nav-cta" href={`mailto:${CONTACT.email}`}>Email</a>
     </header>
   )
 }
@@ -69,13 +72,6 @@ function Intro() {
       <p className="intro-title">{INTRO.title}</p>
       <p className="intro-body">{INTRO.paragraph}</p>
       <p className="intro-meta">{INTRO.meta}</p>
-      <div className="btn-row">
-        <a className="btn primary" href={`mailto:${CONTACT.email}`}>Email me</a>
-        <a className="btn" href={RESUME_URL} download>
-          <DownloadIcon />
-          Résumé <span className="btn-hint">PDF</span>
-        </a>
-      </div>
     </section>
   )
 }
@@ -236,12 +232,6 @@ function Contact() {
       <h2 className="kicker">Contact</h2>
       <p className="contact-text">{CONTACT_TEXT}</p>
       <a className="contact-email" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
-      <div className="btn-row">
-        <a className="btn" href={RESUME_URL} download>
-          <DownloadIcon />
-          Résumé <span className="btn-hint">PDF</span>
-        </a>
-      </div>
     </section>
   )
 }

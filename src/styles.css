@@ -53,14 +53,8 @@ a:focus-visible, .btn:focus-visible {
   background: color-mix(in srgb, var(--paper) 86%, transparent);
   backdrop-filter: blur(8px);
 }
-.nav-name {
-  font-weight: 600;
-  color: var(--ink);
-  text-decoration: none;
-  font-size: 15.5px;
-}
-.nav-links { display: flex; gap: 22px; margin-left: auto; }
-.nav-social { display: flex; align-items: center; gap: 4px; }
+.nav-links { display: flex; gap: 22px; }
+.nav-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
 .icon-btn {
   display: inline-flex;
   align-items: center;
@@ -79,6 +73,22 @@ a:focus-visible, .btn:focus-visible {
   transition: color 130ms ease;
 }
 .nav-links a:hover { color: var(--ink); }
+.nav-resume {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 7px 16px;
+  margin-left: 4px;
+  transition: border-color 130ms ease;
+}
+.nav-resume:hover { border-color: var(--muted); }
 .nav-cta {
   font-size: 14px;
   font-weight: 600;
@@ -366,7 +376,8 @@ h2:not(.kicker) { font-size: clamp(1.5rem, 2.8vw, 1.9rem); font-weight: 600; let
 @media (max-width: 900px) {
   .nav { padding: 12px 20px; gap: 8px; }
   .nav-links { display: none; }
-  .nav-social { margin-left: auto; }
+  .nav-actions { margin: 0 auto; }
+  .nav-resume { padding: 7px 14px; }
   .intro { padding-top: 64px; }
   .section { padding-top: 72px; }
   .case-meta { grid-template-columns: 1fr 1fr; gap: 20px 24px; }
