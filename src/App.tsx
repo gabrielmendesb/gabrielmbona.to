@@ -1,8 +1,20 @@
-import { Fragment } from 'react'
 import {
-  CONTACT, RESUME_URL, INTRO, CASE, FLOWS, ALSO, EXPERIENCE, SKILL_GROUPS, PRINCIPLES, CONTACT_TEXT,
+  CONTACT, RESUME_URL, REPO_URL, NAME, CAT_PHOTOS, LOCALES, type Content, type Locale,
 } from './content'
 import { useReveal } from './useReveal'
+import { useTheme } from './useTheme'
+import { useLang } from './useLang'
+import { useScrollSpy } from './useScrollSpy'
+import { useClipboard } from './useClipboard'
+
+/** Sections built but not shown yet — flip to true to enable.
+ *  Cats needs photos in public/cats/ + CAT_PHOTOS filled first. */
+const SHOW_CONTACT = true
+const SHOW_CATS = false
+
+const SECTION_IDS = ['top', 'work', 'experience', 'skills', 'contact'].filter(
+  (id) => id !== 'contact' || SHOW_CONTACT,
+)
 
 function GithubIcon() {
   return (
@@ -28,88 +40,132 @@ function DownloadIcon() {
   )
 }
 
-function TopNav() {
+function SunIcon() {
+  return (
+    <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
+      <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zM8 0a.75.75 0 0 1 .75.75v1a.75.75 0 0 1-1.5 0v-1A.75.75 0 0 1 8 0zm0 13a.75.75 0 0 1 .75.75v1a.75.75 0 0 1-1.5 0v-1A.75.75 0 0 1 8 13zM16 8a.75.75 0 0 1-.75.75h-1a.75.75 0 0 1 0-1.5h1A.75.75 0 0 1 16 8zM3 8a.75.75 0 0 1-.75.75h-1a.75.75 0 0 1 0-1.5h1A.75.75 0 0 1 3 8zm10.657-5.657a.75.75 0 0 1 0 1.06l-.708.708a.75.75 0 1 1-1.06-1.06l.707-.708a.75.75 0 0 1 1.06 0zM4.111 11.889a.75.75 0 0 1 0 1.06l-.707.708a.75.75 0 1 1-1.061-1.061l.707-.707a.75.75 0 0 1 1.061 0zm9.546 1.768a.75.75 0 0 1-1.06 0l-.708-.707a.75.75 0 0 1 1.06-1.061l.708.707a.75.75 0 0 1 0 1.061zM4.111 4.111a.75.75 0 0 1-1.06 0l-.708-.707a.75.75 0 1 1 1.06-1.061l.708.707a.75.75 0 0 1 0 1.061z" />
+    </svg>
+  )
+}
+
+function MoonIcon() {
+  return (
+    <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
+      <path d="M6.1 1.2a.75.75 0 0 1 .2.9 5.6 5.6 0 0 0 7.4 7.4.75.75 0 0 1 1 1A7.1 7.1 0 1 1 5.2 1a.75.75 0 0 1 .9.2z" />
+    </svg>
+  )
+}
+
+function ThemeToggle() {
+  const [theme, toggle] = useTheme()
+  const next = theme === 'dark' ? 'light' : 'dark'
+  return (
+    <button
+      type="button"
+      className="icon-btn"
+      onClick={toggle}
+      aria-label={`Switch to ${next} theme`}
+      title={`Switch to ${next} theme`}
+    >
+      {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+    </button>
+  )
+}
+
+function LangSwitch({ lang, setLang }: { lang: Locale; setLang: (l: Locale) => void }) {
+  return (
+    <div className="lang-switch" role="group" aria-label="Language">
+      {LOCALES.map((l) => (
+        <button
+          key={l.code}
+          type="button"
+          className={`lang-btn${lang === l.code ? ' is-active' : ''}`}
+          onClick={() => setLang(l.code)}
+          aria-pressed={lang === l.code}
+          lang={l.code}
+        >
+          {l.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function SideNav({ t }: { t: Content }) {
+  const active = useScrollSpy(SECTION_IDS, 'top')
+  return (
+    <nav className="side-nav" aria-label={t.ui.navLabel}>
+      {SECTION_IDS.map((id) => (
+        <a
+          key={id}
+          href={`#${id}`}
+          className={`side-link${active === id ? ' is-active' : ''}`}
+          aria-current={active === id ? 'true' : undefined}
+        >
+          <span className="side-tick" aria-hidden="true" />
+          <span className="side-label">{t.ui.sections[id as keyof typeof t.ui.sections]}</span>
+        </a>
+      ))}
+    </nav>
+  )
+}
+
+function TopNav({ t, lang, setLang }: { t: Content; lang: Locale; setLang: (l: Locale) => void }) {
   return (
     <header className="nav">
-      <nav className="nav-links" aria-label="Sections">
-        <a href="#work">Work</a>
-        <a href="#experience">Experience</a>
-        <a href="#skills">Skills</a>
-      </nav>
-      <div className="nav-actions">
-        <a
-          className="icon-btn"
-          href={CONTACT.github}
-          target="_blank"
-          rel="noreferrer"
-          aria-label="GitHub profile"
-        >
-          <GithubIcon />
-        </a>
-        <a
-          className="icon-btn"
-          href={CONTACT.linkedin}
-          target="_blank"
-          rel="noreferrer"
-          aria-label="LinkedIn profile"
-        >
-          <LinkedinIcon />
-        </a>
-        <a className="nav-resume" href={RESUME_URL} download>
-          <DownloadIcon />
-          Résumé
-        </a>
-        <a className="nav-cta" href={`mailto:${CONTACT.email}`}>Email</a>
+      <div className="nav-inner">
+        <nav className="nav-links" aria-label={t.ui.navLabel}>
+          <a href="#work">{t.ui.sections.work}</a>
+          <a href="#experience">{t.ui.sections.experience}</a>
+          <a href="#skills">{t.ui.sections.skills}</a>
+        </nav>
+        <div className="nav-actions">
+          <LangSwitch lang={lang} setLang={setLang} />
+          <ThemeToggle />
+          <span className="nav-sep" aria-hidden="true" />
+          <a className="nav-resume" href={RESUME_URL} download>
+            <DownloadIcon />
+            {t.ui.cv}
+          </a>
+          <a className="nav-cta" href="#contact">{t.ui.getInTouch}</a>
+        </div>
       </div>
     </header>
   )
 }
 
-function Intro() {
+function Intro({ t }: { t: Content }) {
   return (
     <section className="intro" id="top">
-      <h1>{INTRO.name}</h1>
-      <p className="intro-title">{INTRO.title}</p>
-      <p className="intro-body">{INTRO.paragraph}</p>
-      <p className="intro-meta">{INTRO.meta}</p>
+      <h1>{NAME}</h1>
+      <p className="intro-title">{t.intro.title}</p>
+
+      <div className="intro-block">
+        <p className="kicker">{t.intro.whoLabel}</p>
+        <p className="intro-body">{t.intro.who}</p>
+      </div>
+
+      <div className="intro-block">
+        <p className="kicker">{t.intro.workLabel}</p>
+        <p className="intro-body">{t.intro.work}</p>
+      </div>
     </section>
   )
 }
 
-function Diagram() {
-  return (
-    <figure className="diagram">
-      {FLOWS.map((flow) => (
-        <div key={flow.label} className="track">
-          <p className="track-label">{flow.label}</p>
-          <div className="diagram-flow">
-            {flow.stages.map((s, i) => (
-              <Fragment key={s.name}>
-                {i > 0 && <span className="arrow" aria-hidden="true" />}
-                <div className="stage">
-                  <p className="stage-name">{s.name}</p>
-                  <p className="stage-desc">{s.desc}</p>
-                </div>
-              </Fragment>
-            ))}
-          </div>
-        </div>
-      ))}
-    </figure>
-  )
-}
-
-function CaseStudy() {
+function CaseStudy({ t }: { t: Content }) {
   const ref = useReveal<HTMLElement>()
+  const c = t.caseStudy
   return (
     <section className="section reveal" ref={ref} id="work">
-      <p className="kicker">Selected work</p>
-      <h2>{CASE.heading}</h2>
-      <p className="case-period">{CASE.period}</p>
-      <p className="case-summary">{CASE.summary}</p>
+      <p className="kicker">{c.kicker}</p>
+
+      <h2>{c.heading}</h2>
+      <p className="case-period">{c.period}</p>
+      <p className="case-summary">{c.summary}</p>
 
       <dl className="case-meta">
-        {CASE.meta.map((m) => (
+        {c.meta.map((m) => (
           <div key={m.label} className="meta-cell">
             <dt>{m.label}</dt>
             <dd>{m.value}</dd>
@@ -117,11 +173,9 @@ function CaseStudy() {
         ))}
       </dl>
 
-      <Diagram />
-
-      <h3 className="sub">What I built</h3>
+      <h3 className="sub" id="built">{c.builtLabel}</h3>
       <div className="built">
-        {CASE.built.map((b) => (
+        {c.built.map((b) => (
           <div key={b.title} className="built-item">
             <h4>{b.title}</h4>
             <p>{b.body}</p>
@@ -129,48 +183,25 @@ function CaseStudy() {
         ))}
       </div>
 
-      <h3 className="sub">Selected outcomes</h3>
+      <h3 className="sub" id="outcomes">{c.outcomesLabel}</h3>
       <ul className="outcomes">
-        {CASE.outcomes.map((o) => (
+        {c.outcomes.map((o) => (
           <li key={o.slice(0, 24)}>{o}</li>
         ))}
       </ul>
 
-      <p className="case-note">
-        Repositories are private — this is my employer’s platform. Happy to go deep on the
-        architecture and the reasoning behind it.
-      </p>
+      <p className="case-note">{c.note}</p>
     </section>
   )
 }
 
-function AlsoBuilt() {
-  const ref = useReveal<HTMLElement>()
-  return (
-    <section className="section reveal" ref={ref}>
-      <h2 className="kicker">Also built</h2>
-      <div className="also-grid">
-        {ALSO.map((a) => (
-          <article key={a.title} className="also-card">
-            <div className="also-head">
-              <h3>{a.title}</h3>
-              <span className="tag">{a.tag}</span>
-            </div>
-            <p>{a.body}</p>
-          </article>
-        ))}
-      </div>
-    </section>
-  )
-}
-
-function Experience() {
+function Experience({ t }: { t: Content }) {
   const ref = useReveal<HTMLElement>()
   return (
     <section className="section reveal" ref={ref} id="experience">
-      <h2 className="kicker">Experience</h2>
+      <h2 className="kicker">{t.experience.label}</h2>
       <div className="xp">
-        {EXPERIENCE.map((e) => (
+        {t.experience.items.map((e) => (
           <article key={e.company} className="xp-row">
             <div className="xp-left">
               <p className="xp-period">{e.period}</p>
@@ -191,67 +222,124 @@ function Experience() {
   )
 }
 
-function Skills() {
+function Skills({ t }: { t: Content }) {
   const ref = useReveal<HTMLElement>()
   return (
     <section className="section reveal" ref={ref} id="skills">
-      <h2 className="kicker">Skills</h2>
+      <h2 className="kicker">{t.skills.label}</h2>
       <div className="skills">
-        {SKILL_GROUPS.map((g) => (
+        {t.skills.groups.map((g) => (
           <div key={g.name} className="skill-group">
             <p className="skill-name">{g.name}</p>
             <p className="skill-items">{g.items}</p>
           </div>
         ))}
       </div>
-    </section>
-  )
-}
 
-function HowIWork() {
-  const ref = useReveal<HTMLElement>()
-  return (
-    <section className="section reveal" ref={ref}>
-      <h2 className="kicker">How I work</h2>
-      <div className="principles">
-        {PRINCIPLES.map((p) => (
-          <div key={p.title} className="principle">
-            <h3>{p.title}</h3>
-            <p>{p.body}</p>
-          </div>
-        ))}
+      <div className="sub-block">
+        <p className="sub-label">{t.skills.langLabel}</p>
+        <div className="langs">
+          {t.skills.languages.map((l) => (
+            <div key={l.name} className="lang">
+              <p className="lang-name">{l.name}</p>
+              <p className="lang-level">{l.level}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="sub-block" id="approach">
+        <p className="sub-label">{t.principles.label}</p>
+        <div className="principles">
+          {t.principles.items.map((pr) => (
+            <div key={pr.title} className="principle">
+              <h3>{pr.title}</h3>
+              <p>{pr.body}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )
 }
 
-function Contact() {
+function Contact({ t }: { t: Content }) {
+  const ref = useReveal<HTMLElement>()
+  const { copied, copy } = useClipboard()
+
+  return (
+    <section className="section reveal" ref={ref} id="contact">
+      <h2 className="kicker">{t.availability.label}</h2>
+      <p className="avail-body">{t.availability.body}</p>
+
+      <div className="contact-direct">
+        <a className="contact-email" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+        <button type="button" className="copy-btn" onClick={() => copy(CONTACT.email)}>
+          {copied ? t.ui.copied : t.ui.copy}
+        </button>
+      </div>
+
+      <div className="contact-profiles">
+        <a href={CONTACT.github} target="_blank" rel="noreferrer">
+          <GithubIcon />
+          GitHub
+        </a>
+        <a href={CONTACT.linkedin} target="_blank" rel="noreferrer">
+          <LinkedinIcon />
+          LinkedIn
+        </a>
+      </div>
+    </section>
+  )
+}
+
+function Cats({ t }: { t: Content }) {
   const ref = useReveal<HTMLElement>()
   return (
-    <section className="section reveal contact" ref={ref} id="contact">
-      <h2 className="kicker">Contact</h2>
-      <p className="contact-text">{CONTACT_TEXT}</p>
-      <a className="contact-email" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+    <section className="section reveal cats" ref={ref} id="cats">
+      <h2 className="kicker">{t.cats.label}</h2>
+      <p className="cats-note">{t.cats.note}</p>
+      {CAT_PHOTOS.length > 0 && (
+        <div className="cat-grid">
+          {CAT_PHOTOS.map((p) => (
+            <img key={p.src} className="cat-photo" src={p.src} alt={p.alt} loading="lazy" />
+          ))}
+        </div>
+      )}
     </section>
   )
 }
 
 export default function App() {
+  const { lang, t, setLang } = useLang()
+
   return (
     <>
-      <TopNav />
-      <main>
-        <Intro />
-        <CaseStudy />
-        <AlsoBuilt />
-        <Experience />
-        <Skills />
-        <HowIWork />
-        <Contact />
+      <a className="skip-link" href="#main">{t.ui.skip}</a>
+      <TopNav t={t} lang={lang} setLang={setLang} />
+      <SideNav t={t} />
+      <main id="main">
+        <Intro t={t} />
+        <CaseStudy t={t} />
+        <Experience t={t} />
+        <Skills t={t} />
+        {SHOW_CONTACT && <Contact t={t} />}
+        {SHOW_CATS && <Cats t={t} />}
       </main>
       <footer className="footer">
-        <span>© {new Date().getFullYear()} Gabriel Mendes Bonato</span>
-        <a href={CONTACT.github} target="_blank" rel="noreferrer">Site source on GitHub</a>
+        <div className="footer-inner">
+          <span>© {new Date().getFullYear()} {NAME}</span>
+          <a
+            className="icon-btn"
+            href={REPO_URL}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={t.ui.source}
+            title={t.ui.source}
+          >
+            <GithubIcon />
+          </a>
+        </div>
       </footer>
     </>
   )

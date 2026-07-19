@@ -3,11 +3,82 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Gabriel Mendes Bonato — full-stack software engineer, industrial IoT & energy. Lead engineer of a monitoring and remote-control platform running across a fleet of utility-scale solar plants." />
-    <meta property="og:title" content="Gabriel Mendes Bonato — Software Engineer" />
-    <meta property="og:description" content="Lead engineer of a solar-plant monitoring and remote-control platform — a fleet of utility-scale plants in production. Python · FastAPI · TimescaleDB · React · TypeScript." />
-    <meta property="og:type" content="website" />
-    <title>Gabriel Mendes Bonato — Software Engineer · Industrial IoT & Energy</title>
+
+    <title>Gabriel Mendes Bonato — Software Engineer · Industrial IoT &amp; Energy</title>
+    <meta
+      name="description"
+      content="Gabriel Mendes Bonato — full-stack software engineer working in industrial IoT and energy. Lead engineer of a monitoring and remote-control platform running across a fleet of utility-scale solar plants. Open to remote work, based in Brazil (GMT−3)."
+    />
+    <meta name="author" content="Gabriel Mendes Bonato" />
+    <link rel="canonical" href="https://gabrielmbona.to/" />
+
+    <!-- theme-color per scheme so mobile browser chrome matches the page -->
+    <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#131316" media="(prefers-color-scheme: dark)" />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:url" content="https://gabrielmbona.to/" />
+    <meta property="og:site_name" content="Gabriel Mendes Bonato" />
+    <meta property="og:title" content="Gabriel Mendes Bonato — Software Engineer · Industrial IoT &amp; Energy" />
+    <meta
+      property="og:description"
+      content="Lead engineer of a monitoring and remote-control platform running across a fleet of utility-scale solar plants. Open to remote full-time and contract work."
+    />
+    <meta property="profile:first_name" content="Gabriel" />
+    <meta property="profile:last_name" content="Bonato" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Gabriel Mendes Bonato — Software Engineer" />
+    <meta
+      name="twitter:description"
+      content="Full-stack software engineer, industrial IoT and energy. Open to remote work, based in Brazil."
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Gabriel Mendes Bonato",
+        "url": "https://gabrielmbona.to/",
+        "email": "mailto:gabriel.mbonato@gmail.com",
+        "jobTitle": "Full-stack Software Engineer",
+        "description": "Full-stack software engineer working in industrial IoT and energy.",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Araraquara",
+          "addressRegion": "SP",
+          "addressCountry": "BR"
+        },
+        "knowsLanguage": ["pt-BR", "en"],
+        "knowsAbout": [
+          "Industrial IoT",
+          "Modbus",
+          "Solar energy",
+          "Python",
+          "FastAPI",
+          "TimescaleDB",
+          "React",
+          "TypeScript"
+        ],
+        "sameAs": [
+          "https://github.com/gabrielmendesb",
+          "https://www.linkedin.com/in/g-mendes-bonato/"
+        ]
+      }
+    </script>
+
+    <script>
+      // Runs before first paint so the page never flashes the wrong theme.
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme')
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+          document.documentElement.dataset.theme = stored || (prefersDark ? 'dark' : 'light')
+        } catch (e) {
+          document.documentElement.dataset.theme = 'light'
+        }
+      })()
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
